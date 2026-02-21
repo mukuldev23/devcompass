@@ -23,7 +23,7 @@ Production-grade legal developer article aggregation and discovery platform.
   - `category`
   - `isRedirectOnly`
 - Source URLs are validated and normalized; unsafe/internal URLs are blocked.
-- UI always links to original source (`Read Original`) with `rel="noopener noreferrer"`.
+- UI always links to original source (`Read`) with `rel="noopener noreferrer"`.
 - If full content is unavailable, preview text is shown and user is redirected to original source.
 
 ## Monorepo Structure

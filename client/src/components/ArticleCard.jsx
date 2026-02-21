@@ -7,7 +7,14 @@ function ArticleCard({ article }) {
   const imageSrc = optimizeImageUrl(article.coverImage || FALLBACK_IMAGE, 640);
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-xl" style={{ contentVisibility: 'auto', containIntrinsicSize: '320px' }}>
+    <a
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Read original article: ${article.title}`}
+      className="group relative block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '320px' }}
+    >
       <div className="pointer-events-none absolute inset-0 -z-0 bg-gradient-to-br from-white to-brand-50/40 opacity-0 transition group-hover:opacity-100" />
       <div className="relative h-44 overflow-hidden bg-slate-100">
         <img
@@ -18,7 +25,7 @@ function ArticleCard({ article }) {
           decoding="async"
           width="640"
           height="360"
-          fetchpriority="low"
+          fetchPriority="low"
         />
       </div>
 
@@ -42,12 +49,12 @@ function ArticleCard({ article }) {
 
         <div className="flex items-center justify-between pt-1 text-sm">
           <span className="text-slate-500">By {article.author || 'Unknown'}</span>
-          <a href={article.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full bg-brand-700 px-3 py-1.5 font-semibold text-white transition hover:bg-brand-900">
+          <span className="inline-flex items-center gap-1 rounded-full bg-brand-700 px-3 py-1.5 font-semibold text-white transition group-hover:bg-brand-900">
             Read Original <ExternalLink />
-          </a>
+          </span>
         </div>
       </div>
-    </article>
+    </a>
   );
 }
 

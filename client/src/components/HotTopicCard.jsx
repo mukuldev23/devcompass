@@ -38,7 +38,7 @@ function HotTopicCard({ article, rank }) {
           <h3 className="line-clamp-2 text-lg font-bold leading-6">{article.title}</h3>
 
           <p className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-brand-100">
-            Read Original
+            Read
             <ExternalLink />
           </p>
         </div>

@@ -6,7 +6,7 @@ import ArticleCard from '../components/ArticleCard';
 import HotTopicCard from '../components/HotTopicCard';
 
 const PAGE_SIZE = 12;
-const MAX_PAGES_IN_MEMORY = 5;
+const MAX_PAGES_IN_MEMORY = 20;
 
 function HomePage() {
   const [category, setCategory] = useState('');
@@ -18,8 +18,7 @@ function HomePage() {
   });
 
   const loadMoreRef = useRef(null);
-  const lastFetchAtRef = useRef(0);
-  const lastSentinelYRef = useRef(Number.POSITIVE_INFINITY);
+  const autoFetchingRef = useRef(false);
 
   const {
     data: articlePages,
@@ -60,11 +59,6 @@ function HomePage() {
     return `${activeSources.length} active sources`;
   }, [sources]);
 
-  const hasNextPageRef = useRef(hasNextPage);
-  const isFetchingNextPageRef = useRef(isFetchingNextPage);
-  useEffect(() => { hasNextPageRef.current = hasNextPage; }, [hasNextPage]);
-  useEffect(() => { isFetchingNextPageRef.current = isFetchingNextPage; }, [isFetchingNextPage]);
-
   useEffect(() => {
     const node = loadMoreRef.current;
     if (!node) return undefined;
@@ -72,19 +66,18 @@ function HomePage() {
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        const now = Date.now();
-        const currentY = entry.boundingClientRect.y;
-        const scrollingDown = currentY < lastSentinelYRef.current;
-        lastSentinelYRef.current = currentY;
-
-        if (entry.isIntersecting && scrollingDown && hasNextPageRef.current && !isFetchingNextPageRef.current && now - lastFetchAtRef.current > 800) {
-          lastFetchAtRef.current = now;
-          fetchNextPage();
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage && !autoFetchingRef.current) {
+          autoFetchingRef.current = true;
+          fetchNextPage().finally(() => {
+            setTimeout(() => {
+              autoFetchingRef.current = false;
+            }, 300);
+          });
         }
       },
       {
-        rootMargin: '100px 0px',
-        threshold: 0.1
+        rootMargin: '500px 0px',
+        threshold: 0
       }
     );
 
@@ -93,7 +86,7 @@ function HomePage() {
     return () => {
       observer.disconnect();
     };
-  }, [fetchNextPage]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
     <section className="space-y-7">
@@ -163,7 +156,16 @@ function HomePage() {
                 {isFetchingNextPage ? (
                   <p className="text-sm text-slate-500">Loading more articles...</p>
                 ) : hasNextPage ? (
-                  <p className="text-sm text-slate-500">Scroll down to load more</p>
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-500">Scroll down to load more</p>
+                    <button
+                      type="button"
+                      onClick={() => fetchNextPage()}
+                      className="rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200"
+                    >
+                      Load more now
+                    </button>
+                  </div>
                 ) : (
                   <p className="text-sm text-slate-500">You reached the end.</p>
                 )}
