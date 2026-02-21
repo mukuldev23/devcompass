@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import DiscoverPage from './pages/DiscoverPage';
 
@@ -7,10 +7,10 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-slate-100 via-white to-slate-100 text-slate-900">
       <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <div>
+          <Link to="/" className="block">
             <p className="font-display text-2xl font-bold tracking-wide text-brand-900">DevCompass</p>
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">Guides developers to knowledge</p>
-          </div>
+          </Link>
           <nav className="flex gap-2 text-sm font-semibold">
             <NavLink
               to="/"
