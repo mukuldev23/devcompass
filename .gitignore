@@ -1,0 +1,14 @@
+node_modules
+server/node_modules
+client/node_modules
+.env
+server/.env
+client/.env
+*.log
+.DS_Store
+client/dist
+coverage
+.github
+package-lock.json
+server/package-lock.json
+client/package-lock.json
