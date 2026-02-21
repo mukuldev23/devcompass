@@ -189,16 +189,3 @@ npm run dev
 curl -X POST http://localhost:4000/api/admin/refresh \
   -H "x-api-key: replace-with-strong-api-key"
 ```
-
-## Production Notes
-- Run backend behind reverse proxy and TLS.
-- Set strong `ADMIN_API_KEY`.
-- Configure persistent Redis and MongoDB backups.
-- Set `NODE_ENV=production`.
-- Restrict CORS to production frontend domain.
-
-## Render Free Tier Keep-Alive
-If deploying on Render free tier, add GitHub secret:
-- `RENDER_HEALTH_URL` = `https://<your-service>.onrender.com/health`
-
-The workflow at `/Users/mukulchavan/Documents/Development/Blogs/.github/workflows/keep-alive.yml` pings this endpoint every 10 minutes.
