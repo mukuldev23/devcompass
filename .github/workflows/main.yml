@@ -1,0 +1,26 @@
+name: Keep Render Awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate endpoint secret
+        run: |
+          if [ -z "${{ secrets.RENDER_HEALTH_URL }}" ]; then
+            echo "Missing secret: RENDER_HEALTH_URL"
+            exit 1
+          fi
+
+      - name: Ping Render health endpoint
+        run: |
+          curl --fail --silent --show-error \
+            --max-time 20 \
+            --retry 3 \
+            --retry-all-errors \
+            "${{ secrets.RENDER_HEALTH_URL }}" > /dev/null
