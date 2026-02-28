@@ -6,11 +6,20 @@ dotenv.config({
   path: path.resolve(__dirname, '../../.env')
 });
 
+function normalizeOrigin(rawOrigin) {
+  try {
+    return new URL(rawOrigin).origin;
+  } catch {
+    return null;
+  }
+}
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
   MONGO_URI: z.string().min(1),
-  CLIENT_ORIGIN: z.string().url().default('http://localhost:5173'),
+  CLIENT_ORIGIN: z.string().url().optional(),
+  CLIENT_ORIGINS: z.string().optional(),
   ADMIN_API_KEY: z.string().min(12),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   REDIS_URL: z.string().optional(),
@@ -33,4 +42,20 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-module.exports = Object.freeze(parsed.data);
+const listedOrigins = (parsed.data.CLIENT_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const combinedOrigins = [parsed.data.CLIENT_ORIGIN, ...listedOrigins]
+  .map((origin) => normalizeOrigin(origin))
+  .filter(Boolean);
+
+if (!combinedOrigins.length) {
+  combinedOrigins.push('http://localhost:5173');
+}
+
+module.exports = Object.freeze({
+  ...parsed.data,
+  ALLOWED_CLIENT_ORIGINS: [...new Set(combinedOrigins)]
+});

@@ -12,6 +12,14 @@ const errorMiddleware = require('./middlewares/error.middleware');
 
 const app = express();
 
+function normalizeOrigin(rawOrigin) {
+  try {
+    return new URL(rawOrigin).origin;
+  } catch {
+    return null;
+  }
+}
+
 app.use(
   pinoHttp({
     logger,
@@ -30,8 +38,23 @@ app.use(
 app.use(helmet());
 app.use(
   cors({
-    origin: env.CLIENT_ORIGIN,
-    methods: ['GET', 'POST']
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const normalizedOrigin = normalizeOrigin(origin);
+      const allowed = normalizedOrigin && env.ALLOWED_CLIENT_ORIGINS.includes(normalizedOrigin);
+
+      if (allowed) {
+        return callback(null, true);
+      }
+
+      logger.warn({ origin, allowedOrigins: env.ALLOWED_CLIENT_ORIGINS }, 'Blocked by CORS policy');
+      return callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'x-api-key']
   })
 );
 
