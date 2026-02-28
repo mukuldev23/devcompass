@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "node scripts/generate-seo.mjs && vite build",
+    "preview": "vite preview",
+    "seo:generate": "node scripts/generate-seo.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.8",
