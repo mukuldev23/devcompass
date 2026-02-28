@@ -50,7 +50,7 @@ function ArticleCard({ article }) {
         <div className="flex items-center justify-between pt-1 text-sm">
           <span className="text-slate-500">By {article.author || 'Unknown'}</span>
           <span className="inline-flex items-center gap-1 rounded-full bg-brand-700 px-3 py-1.5 font-semibold text-white transition group-hover:bg-brand-900">
-            Read Original <ExternalLink />
+            Read <ExternalLink />
           </span>
         </div>
       </div>

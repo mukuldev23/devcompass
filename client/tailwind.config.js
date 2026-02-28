@@ -17,7 +17,10 @@ export default {
       },
       fontFamily: {
         sans: ['"Sora"', 'ui-sans-serif', 'system-ui'],
-        display: ['"Chakra Petch"', 'ui-sans-serif', 'system-ui']
+        display: ['"Chakra Petch"', 'ui-sans-serif', 'system-ui'],
+        headline: ['"Bebas Neue"', 'ui-sans-serif', 'system-ui'],
+        editorial: ['"Cormorant Garamond"', 'ui-serif', 'Georgia'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
       },
       boxShadow: {
         card: '0 8px 30px rgba(10, 20, 35, 0.08)'
