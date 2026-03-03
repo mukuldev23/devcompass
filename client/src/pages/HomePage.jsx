@@ -4,9 +4,13 @@ import { fetchArticles, fetchCategories, fetchHotArticles, fetchSources } from '
 import { ExternalLink } from '../components/icons';
 import { FALLBACK_IMAGE } from '../lib/constants';
 import { optimizeImageUrl } from '../lib/image';
+import AdBanner from '../components/AdBanner';
 
 const PAGE_SIZE = 12;
 const MAX_PAGES_IN_MEMORY = 20;
+const TOP_AD_SLOT = import.meta.env.VITE_ADSENSE_SLOT_TOP || '';
+const INLINE_AD_SLOT = import.meta.env.VITE_ADSENSE_SLOT_INLINE || '';
+const BOTTOM_AD_SLOT = import.meta.env.VITE_ADSENSE_SLOT_BOTTOM || '';
 
 function formatDateLabel(dateInput) {
   const date = dateInput ? new Date(dateInput) : new Date();
@@ -138,6 +142,23 @@ function HomePage() {
   const heroStory = articles[1] || articles[0] || null;
   const sideHeadlines = (hotArticles.length ? hotArticles : articles).slice(2, 6);
   const streamStories = articles.slice(2);
+  const streamWithAds = useMemo(() => {
+    const items = [];
+
+    streamStories.forEach((article, index) => {
+      items.push({
+        type: 'article',
+        key: article._id || article.url,
+        article
+      });
+
+      if ((index + 1) % 6 === 0) {
+        items.push({ type: 'ad', key: `ad-inline-${index}` });
+      }
+    });
+
+    return items;
+  }, [streamStories]);
   const activeSourceCount = sources.filter((source) => source.active).length;
   const categoryStrip = categories.filter((cat) => cat.count > 0);
 
@@ -251,11 +272,26 @@ function HomePage() {
             </aside>
           </div>
 
+          <AdBanner slot={TOP_AD_SLOT} minHeight={140} />
+
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {streamStories.map((article) => (
-              <StreamCard key={article._id || article.url} article={article} />
-            ))}
+            {streamWithAds.map((item) => {
+              if (item.type === 'ad') {
+                return (
+                  <AdBanner
+                    key={item.key}
+                    slot={INLINE_AD_SLOT}
+                    minHeight={130}
+                    className="sm:col-span-2 xl:col-span-3"
+                  />
+                );
+              }
+
+              return <StreamCard key={item.key} article={item.article} />;
+            })}
           </div>
+
+          <AdBanner slot={BOTTOM_AD_SLOT} minHeight={140} />
 
           <div ref={loadMoreRef} className="pt-3 text-center">
             {isFetchingNextPage ? (
