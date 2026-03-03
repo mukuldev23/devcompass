@@ -23,6 +23,13 @@ const envSchema = z.object({
   ADMIN_API_KEY: z.string().min(12),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   REDIS_URL: z.string().optional(),
+  RESTRICT_PUBLIC_API_TO_ORIGINS: z
+    .string()
+    .optional()
+    .transform((value) => {
+      if (value === undefined) return false;
+      return value.toLowerCase() === 'true';
+    }),
   INGEST_ON_START: z
     .string()
     .optional()

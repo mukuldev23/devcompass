@@ -51,7 +51,7 @@ app.use(
       }
 
       logger.warn({ origin, allowedOrigins: env.ALLOWED_CLIENT_ORIGINS }, 'Blocked by CORS policy');
-      return callback(new Error('Not allowed by CORS'));
+      return callback(null, false);
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'x-api-key']
@@ -74,6 +74,42 @@ app.get('/health', (req, res) => {
     success: true,
     message: 'OK'
   });
+});
+
+const originRestrictedPublicPaths = new Set([
+  '/articles',
+  '/articles/random',
+  '/articles/hot',
+  '/categories',
+  '/sources'
+]);
+
+app.use('/api', (req, res, next) => {
+  if (!env.RESTRICT_PUBLIC_API_TO_ORIGINS) {
+    return next();
+  }
+
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
+  const requestOrigin = req.get('origin');
+  const normalizedOrigin = requestOrigin ? normalizeOrigin(requestOrigin) : null;
+  const isPublicGetRoute = req.method === 'GET' && originRestrictedPublicPaths.has(req.path);
+  const isAllowedOrigin = normalizedOrigin && env.ALLOWED_CLIENT_ORIGINS.includes(normalizedOrigin);
+
+  if (isPublicGetRoute && !isAllowedOrigin) {
+    logger.warn(
+      { path: req.path, method: req.method, origin: requestOrigin || null },
+      'Blocked direct public API access without an allowed Origin'
+    );
+    return res.status(403).json({
+      success: false,
+      message: 'Direct API access is restricted'
+    });
+  }
+
+  return next();
 });
 
 app.use('/api', apiRoutes);
