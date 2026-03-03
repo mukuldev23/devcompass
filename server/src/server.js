@@ -9,9 +9,19 @@ async function bootstrap() {
   await connectDatabase();
   await cacheClient.connect();
 
+  logger.info(
+    {
+      restrictPublicApiToOrigins: env.RESTRICT_PUBLIC_API_TO_ORIGINS,
+      allowedClientOrigins: env.ALLOWED_CLIENT_ORIGINS
+    },
+    'API origin restriction config'
+  );
+
   const server = app.listen(env.PORT, () => {
     logger.info(`DevCompass API listening on port ${env.PORT}`);
   });
+
+  let isShuttingDown = false;
 
   startRefreshScheduler();
 
@@ -24,16 +34,27 @@ async function bootstrap() {
     logger.info('Initial ingestion skipped (INGEST_ON_START=false)');
   }
 
-  const shutdown = async () => {
+  const shutdown = async (signal) => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+
+    if (signal) {
+      logger.info({ signal }, 'Shutdown signal received');
+    }
+
     logger.info('Shutting down gracefully');
     server.close(async () => {
-      await cacheClient.disconnect();
+      try {
+        await cacheClient.disconnect();
+      } catch (error) {
+        logger.warn({ err: error }, 'Error while disconnecting cache during shutdown');
+      }
       process.exit(0);
     });
   };
 
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
+  process.once('SIGTERM', () => shutdown('SIGTERM'));
+  process.once('SIGINT', () => shutdown('SIGINT'));
 }
 
 bootstrap().catch((error) => {
