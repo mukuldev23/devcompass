@@ -28,7 +28,8 @@ const envSchema = z.object({
     .optional()
     .transform((value) => {
       if (value === undefined) return false;
-      return value.toLowerCase() === 'true';
+      const normalized = value.trim().toLowerCase();
+      return normalized === 'true' || normalized === '1' || normalized === 'yes';
     }),
   INGEST_ON_START: z
     .string()

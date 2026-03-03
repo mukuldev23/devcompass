@@ -95,12 +95,26 @@ app.use('/api', (req, res, next) => {
 
   const requestOrigin = req.get('origin');
   const normalizedOrigin = requestOrigin ? normalizeOrigin(requestOrigin) : null;
-  const isPublicGetRoute = req.method === 'GET' && originRestrictedPublicPaths.has(req.path);
+  const normalizedPath = req.path.endsWith('/') && req.path.length > 1 ? req.path.slice(0, -1) : req.path;
+  const isPublicGetRoute = req.method === 'GET' && originRestrictedPublicPaths.has(normalizedPath);
   const isAllowedOrigin = normalizedOrigin && env.ALLOWED_CLIENT_ORIGINS.includes(normalizedOrigin);
+  const secFetchMode = req.get('sec-fetch-mode');
+  const isBrowserNavigateRequest = secFetchMode === 'navigate';
+
+  if (isPublicGetRoute && isBrowserNavigateRequest) {
+    logger.warn(
+      { path: req.path, method: req.method, origin: requestOrigin || null, secFetchMode },
+      'Blocked browser navigation to public API endpoint'
+    );
+    return res.status(403).json({
+      success: false,
+      message: 'Direct API access is restricted'
+    });
+  }
 
   if (isPublicGetRoute && !isAllowedOrigin) {
     logger.warn(
-      { path: req.path, method: req.method, origin: requestOrigin || null },
+      { path: req.path, method: req.method, origin: requestOrigin || null, secFetchMode },
       'Blocked direct public API access without an allowed Origin'
     );
     return res.status(403).json({
