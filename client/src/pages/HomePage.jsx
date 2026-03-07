@@ -3,6 +3,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { fetchArticles, fetchCategories, fetchHotArticles, fetchSources } from '../api/articles.api';
 import { ExternalLink } from '../components/icons';
 import { FALLBACK_IMAGE } from '../lib/constants';
+import { parseBooleanEnv } from '../lib/env';
 import { optimizeImageUrl } from '../lib/image';
 import AdBanner from '../components/AdBanner';
 
@@ -11,6 +12,7 @@ const MAX_PAGES_IN_MEMORY = 20;
 const TOP_AD_SLOT = import.meta.env.VITE_ADSENSE_SLOT_TOP || '';
 const INLINE_AD_SLOT = import.meta.env.VITE_ADSENSE_SLOT_INLINE || '';
 const BOTTOM_AD_SLOT = import.meta.env.VITE_ADSENSE_SLOT_BOTTOM || '';
+const ADS_ENABLED = parseBooleanEnv(import.meta.env.VITE_ENABLE_ADS, false);
 
 function formatDateLabel(dateInput) {
   const date = dateInput ? new Date(dateInput) : new Date();
@@ -142,6 +144,9 @@ function HomePage() {
   const heroStory = articles[1] || articles[0] || null;
   const sideHeadlines = (hotArticles.length ? hotArticles : articles).slice(2, 6);
   const streamStories = articles.slice(2);
+  const shouldShowTopAd = ADS_ENABLED && Boolean(TOP_AD_SLOT);
+  const shouldShowInlineAd = ADS_ENABLED && Boolean(INLINE_AD_SLOT);
+  const shouldShowBottomAd = ADS_ENABLED && Boolean(BOTTOM_AD_SLOT);
   const streamWithAds = useMemo(() => {
     const items = [];
 
@@ -152,13 +157,13 @@ function HomePage() {
         article
       });
 
-      if ((index + 1) % 6 === 0) {
+      if (shouldShowInlineAd && (index + 1) % 6 === 0) {
         items.push({ type: 'ad', key: `ad-inline-${index}` });
       }
     });
 
     return items;
-  }, [streamStories]);
+  }, [streamStories, shouldShowInlineAd]);
   const activeSourceCount = sources.filter((source) => source.active).length;
   const categoryStrip = categories.filter((cat) => cat.count > 0);
 
@@ -272,7 +277,7 @@ function HomePage() {
             </aside>
           </div>
 
-          <AdBanner slot={TOP_AD_SLOT} minHeight={140} />
+          {shouldShowTopAd && <AdBanner slot={TOP_AD_SLOT} minHeight={140} />}
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {streamWithAds.map((item) => {
@@ -291,7 +296,7 @@ function HomePage() {
             })}
           </div>
 
-          <AdBanner slot={BOTTOM_AD_SLOT} minHeight={140} />
+          {shouldShowBottomAd && <AdBanner slot={BOTTOM_AD_SLOT} minHeight={140} />}
 
           <div ref={loadMoreRef} className="pt-3 text-center">
             {isFetchingNextPage ? (

@@ -8,7 +8,7 @@ const SEO_BY_PATH = {
   '/': {
     title: 'DevCompass | AI, Backend, Frontend & Security Developer News',
     description:
-      'Discover trending developer articles from trusted public sources across AI, frontend, backend, security, DevOps and programming languages.'
+      'DevCompass curates trending developer articles across AI, frontend, backend, DevOps, and security from trusted sources, with full source attribution.'
   },
   '/discover': {
     title: 'Discover New Dev Articles | DevCompass',
