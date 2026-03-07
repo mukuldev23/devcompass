@@ -7,7 +7,7 @@
 
   <title>DevCompass | AI, Backend, Frontend & Security Developer News</title>
   <meta name="description"
-    content="DevCompass aggregates legal metadata from trusted developer sources and helps you discover trending AI, frontend, backend, DevOps, security and programming articles." />
+    content="DevCompass curates trending developer articles across AI, frontend, backend, DevOps, and security from trusted sources, with full source attribution." />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="author" content="DevCompass" />
@@ -19,16 +19,48 @@
   <meta property="og:site_name" content="DevCompass" />
   <meta property="og:title" content="DevCompass | AI, Backend, Frontend & Security Developer News" />
   <meta property="og:description"
-    content="Discover trending developer articles from trusted public sources with legal attribution." />
+    content="DevCompass curates trending developer articles across AI, frontend, backend, DevOps, and security from trusted sources, with full source attribution." />
   <meta property="og:url" content="https://devcompass.co.in/" />
   <meta property="og:image"
     content="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="DevCompass | AI, Backend, Frontend & Security Developer News" />
-  <meta name="twitter:description" content="Discover trending developer articles from trusted public sources." />
+  <meta name="twitter:description"
+    content="DevCompass curates trending developer articles across AI, frontend, backend, DevOps, and security from trusted sources, with full source attribution." />
   <meta name="twitter:image"
     content="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80" />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://devcompass.co.in#organization",
+          "name": "DevCompass",
+          "url": "https://devcompass.co.in",
+          "logo": "https://devcompass.co.in/logo-512.png"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://devcompass.co.in#website",
+          "url": "https://devcompass.co.in",
+          "name": "DevCompass",
+          "publisher": { "@id": "https://devcompass.co.in#organization" },
+          "inLanguage": "en"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://devcompass.co.in/#webpage",
+          "url": "https://devcompass.co.in/",
+          "name": "DevCompass | AI, Backend, Frontend & Security Developer News",
+          "description": "DevCompass curates trending developer articles across AI, frontend, backend, DevOps, and security from trusted sources, with full source attribution.",
+          "isPartOf": { "@id": "https://devcompass.co.in#website" }
+        }
+      ]
+    }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -53,7 +85,20 @@
 </head>
 
 <body class="bg-slate-50">
-  <div id="root"></div>
+  <div id="root">
+    <main>
+      <h1>DevCompass</h1>
+      <p>
+        DevCompass curates trending developer articles across AI, frontend, backend, DevOps, and security from trusted sources.
+      </p>
+      <p>
+        Each story keeps source attribution and links to the original publisher.
+      </p>
+    </main>
+  </div>
+  <noscript>
+    DevCompass needs JavaScript to load the full app. You can still visit https://devcompass.co.in/discover for editor-curated links.
+  </noscript>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

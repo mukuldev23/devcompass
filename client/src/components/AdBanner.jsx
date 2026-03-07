@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { parseBooleanEnv } from '../lib/env';
 
 const ADSENSE_CLIENT_ID = import.meta.env.VITE_ADSENSE_CLIENT_ID || '';
+const ADS_ENABLED = parseBooleanEnv(import.meta.env.VITE_ENABLE_ADS, false);
 
 function ensureAdSenseScript(clientId) {
   if (!clientId || typeof document === 'undefined') return;
@@ -44,7 +46,7 @@ function AdBanner({ slot, className = '', minHeight = 120 }) {
     return () => window.clearTimeout(timer);
   }, [slot]);
 
-  if (!ADSENSE_CLIENT_ID || !slot) return null;
+  if (!ADS_ENABLED || !ADSENSE_CLIENT_ID || !slot) return null;
 
   return (
     <div className={`border border-slate-300 bg-[#efece7] p-2 ${className}`} style={{ minHeight }}>
